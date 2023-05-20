@@ -3,6 +3,7 @@
 
 #include "framework.h"
 #include "WindowsProject1.h"
+#include "Canvas.h"
 
 #define MAX_LOADSTRING 100
 
@@ -11,10 +12,17 @@ HINSTANCE hInst;                                // 当前程序ID
 WCHAR szTitle[MAX_LOADSTRING];                  // 标题栏文本
 WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
 
+HDC hDC;  // 显示器直接获取每个像素的来源
+HDC hMem; // hDC的备用
+GT::Canvas* _canvas = nullptr;
+
 // 窗口的基本性质
 HWND hWnd;
 int wWidth = 800;
 int wHeight = 600;
+
+// 全局处理函数
+void Render();
 
 // 此代码模块中包含的函数的前向声明:
 ATOM                MyRegisterClass(HINSTANCE hInstance);  // 注册一个窗体类型，方便设置需要的属性
@@ -49,8 +57,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // 构建画布
     void* buffer;
 
-    HDC hDC = GetDC(hWnd);  // 显示器直接获取每个像素的来源
-    HDC hMem = CreateCompatibleDC(hDC); // 为hDC进行预计算，计算好后的值全部给hDC，避免卡顿
+    hDC = GetDC(hWnd);  // 显示器直接获取每个像素的来源
+    hMem = CreateCompatibleDC(hDC); // 为hDC进行预计算，计算好后的值全部给hDC，避免卡顿
 
     BITMAPINFO bmpInfo;
     bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -71,6 +79,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     memset(buffer, 0, wWidth * wHeight * 4); // 清空buffer为0
 
+    // canvas和buffer的概念应该是一样的
+    _canvas = new GT::Canvas(wWidth, wHeight, buffer);
+
     MSG msg;
 
     // 主消息循环:
@@ -82,14 +93,28 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
 
-        // 画到设备上，hMem相当于缓冲区
-        BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
+        Render();
     }
 
     return (int) msg.wParam;
 }
 
+void Render()
+{
+    _canvas->clear();
 
+    for (int x = 0; x < wWidth; x++)
+    {
+        for (int y = 0; y < wHeight; y++)
+        {
+            GT::RGBA _color(rand()%255, rand() % 255, rand() % 255, 1);
+            _canvas->drawPoint(x, y, _color);
+        }
+    }
+
+    // 画到设备上，hMem相当于缓冲区
+    BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
+}
 
 //
 //  函数: MyRegisterClass()
