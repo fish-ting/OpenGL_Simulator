@@ -46,6 +46,31 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINDOWSPROJECT1));
 
+    // 构建画布
+    void* buffer;
+
+    HDC hDC = GetDC(hWnd);  // 显示器直接获取每个像素的来源
+    HDC hMem = CreateCompatibleDC(hDC); // 为hDC进行预计算，计算好后的值全部给hDC，避免卡顿
+
+    BITMAPINFO bmpInfo;
+    bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmpInfo.bmiHeader.biWidth = wWidth;
+    bmpInfo.bmiHeader.biHeight = wHeight;
+    bmpInfo.bmiHeader.biPlanes = 1;
+    bmpInfo.bmiHeader.biBitCount = 32; // RGBA
+    bmpInfo.bmiHeader.biCompression = BI_RGB;
+    bmpInfo.bmiHeader.biSizeImage = 0;
+    bmpInfo.bmiHeader.biXPelsPerMeter = 0;
+    bmpInfo.bmiHeader.biYPelsPerMeter = 0;
+    bmpInfo.bmiHeader.biClrUsed = 0;
+    bmpInfo.bmiHeader.biClrImportant = 0;
+
+    // 实际创建位图(画布)，buffer指定到内存上，相当于可直接操控的一块内存画布
+    HBITMAP hBmp = CreateDIBSection(hDC, &bmpInfo, DIB_RGB_COLORS, (void**)&buffer, 0, 0);
+    SelectObject(hMem, hBmp); // 将hMem和hBmp绑定起来
+
+    memset(buffer, 0, wWidth * wHeight * 4); // 清空buffer为0
+
     MSG msg;
 
     // 主消息循环:
@@ -56,6 +81,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+
+        // 画到设备上，hMem相当于缓冲区
+        BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
     }
 
     return (int) msg.wParam;
@@ -82,7 +110,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINDOWSPROJECT1));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_WINDOWSPROJECT1);
+    wcex.lpszMenuName   = NULL;
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
