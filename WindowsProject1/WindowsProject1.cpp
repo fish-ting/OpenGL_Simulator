@@ -7,16 +7,22 @@
 #define MAX_LOADSTRING 100
 
 // 全局变量:
-HINSTANCE hInst;                                // 当前实例
+HINSTANCE hInst;                                // 当前程序ID
 WCHAR szTitle[MAX_LOADSTRING];                  // 标题栏文本
 WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
 
+// 窗口的基本性质
+HWND hWnd;
+int wWidth = 800;
+int wHeight = 600;
+
 // 此代码模块中包含的函数的前向声明:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+ATOM                MyRegisterClass(HINSTANCE hInstance);  // 注册一个窗体类型，方便设置需要的属性
+BOOL                InitInstance(HINSTANCE, int); // 程序的初始化端口
+LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM); // 事件循环的回调
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+// 主循环
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -64,7 +70,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-    WNDCLASSEXW wcex;
+    WNDCLASSEXW wcex; // 窗口的结构体
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
@@ -97,16 +103,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+   // 生成窗口实例
+   hWnd = CreateWindowW(szWindowClass, szTitle, WS_POPUP,
+      CW_USEDEFAULT, 0, wWidth, wHeight, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
       return FALSE;
    }
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+   ShowWindow(hWnd, nCmdShow); // 展示
+   UpdateWindow(hWnd); // 刷新
 
    return TRUE;
 }
