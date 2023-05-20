@@ -88,6 +88,9 @@ namespace GT
 		// 画线，属于canvas画布本身应该存在的基本功能
 		void drawLine(Point pt1, Point pt2);
 
+		// 画三角形，属于canvas画布本身应该存在的基本功能
+		void drawTriangle(Point pt1, Point pt2, Point pt3);
+
 		// 颜色插值计算
 		inline RGBA colorLerp(RGBA _color1, RGBA _color2, float _scale)
 		{

@@ -97,4 +97,47 @@ namespace GT
 			p = p + 2 * disY;
 		}
 	}
+
+	// 画三角形，属于canvas画布本身应该存在的基本功能
+	void Canvas::drawTriangle(Point pt1, Point pt2, Point pt3)
+	{
+		// 构建包围体
+		int left   = MIN(pt3.m_x, MIN(pt1.m_x, pt2.m_x));
+		int top    = MIN(pt3.m_y, MIN(pt1.m_y, pt2.m_y));
+		int right  = MAX(pt3.m_x, MAX(pt1.m_x, pt2.m_x));
+		int bottom = MAX(pt3.m_y, MAX(pt1.m_y, pt2.m_y));
+
+		// 剪裁屏幕外无用的像素
+		left = left < 0 ? 0 : left;
+		top = top < 0 ? 0 : top;
+		right = right > (m_width - 1) ? (m_width - 1) : right;
+		bottom = bottom > (m_height - 1) ? (m_height - 1) : bottom;
+
+		// 计算直线斜率
+		float k1 = (float)(pt2.m_y - pt3.m_y) / (float)(pt2.m_x - pt3.m_x);
+		float k2 = (float)(pt1.m_y - pt3.m_y) / (float)(pt1.m_x - pt3.m_x);
+		float k3 = (float)(pt1.m_y - pt2.m_y) / (float)(pt1.m_x - pt2.m_x);
+	
+		// 计算直线 b 值
+		float b1 = (float)pt2.m_y - k1 * (float)pt2.m_x;
+		float b2 = (float)pt3.m_y - k2 * (float)pt3.m_x;
+		float b3 = (float)pt1.m_y - k3 * (float)pt1.m_x;
+
+		// 循环判断是否在三角形范围内
+		for (int x = left; x <= right; x++)
+		{
+			for (int y = top; y <= bottom; y++)
+			{
+				float judge1 = (y - (k1 * x + b1)) * (pt1.m_y - (k1 * pt1.m_x + b1));
+				float judge2 = (y - (k2 * x + b2)) * (pt2.m_y - (k2 * pt2.m_x + b2));
+				float judge3 = (y - (k3 * x + b3)) * (pt3.m_y - (k3 * pt3.m_x + b3));
+
+				if (judge1 >= 0 && judge2 >= 0 && judge3 >= 0) {
+					RGBA _color(255, 0, 0, 0);
+					drawPoint(x, y, _color);
+				}
+			}
+		}
+
+	}
 }

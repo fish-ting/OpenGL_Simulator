@@ -106,15 +106,11 @@ void Render()
 
     
 
-    GT::Point pt1(200, 200, GT::RGBA(255, 0, 0, 1));
-    float r = 100;
-    for (int i = 0; i < 360; i+=30)
-    {
-        int x = r * sin(i) + pt1.m_x;
-        int y = r * cos(i) + pt1.m_y;
-        GT::Point pt2(x, y, GT::RGBA(0, 255, 0, 1));
-        _canvas->drawLine(pt1, pt2);
-    }
+    GT::Point pt1(0, 0, GT::RGBA(255, 0, 0, 1));
+    GT::Point pt2(100, 50, GT::RGBA(255, 0, 0, 1));
+    GT::Point pt3(150, 200, GT::RGBA(255, 0, 0, 1));
+    _canvas->drawTriangle(pt1, pt2, pt3);
+
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
 }
