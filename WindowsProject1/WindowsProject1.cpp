@@ -106,19 +106,15 @@ void Render()
 
     
 
-    GT::intV2 pt1(100, 100);
-    float r = 50;
-    for (int i = 0; i < 360; i ++)
+    GT::Point pt1(200, 200, GT::RGBA(255, 0, 0, 1));
+    float r = 100;
+    for (int i = 0; i < 360; i+=30)
     {
-        int x = r * sin(i) + pt1.x;
-        int y = r * cos(i) + pt1.y;
-        GT::intV2 pt2(x, y);
-        GT::RGBA _color(rand() % 255, rand() % 255, rand() % 255, 0);
-        _canvas->drawLine(pt1, pt2, _color);
+        int x = r * sin(i) + pt1.m_x;
+        int y = r * cos(i) + pt1.m_y;
+        GT::Point pt2(x, y, GT::RGBA(0, 255, 0, 1));
+        _canvas->drawLine(pt1, pt2);
     }
-
-    //_canvas->drawLine(GT::intV2(100, 100), GT::intV2(150, 180), GT::RGBA(255, 0, 0, 0));
-
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
 }

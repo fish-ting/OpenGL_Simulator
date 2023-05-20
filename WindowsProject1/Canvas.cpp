@@ -15,20 +15,20 @@ namespace GT
 	}
 
 	// 画线，属于canvas画布本身应该存在的基本功能
-	void Canvas::drawLine(intV2 pt1, intV2 pt2, RGBA _color)
+	void Canvas::drawLine(Point pt1, Point pt2)
 	{
-		int disX = abs(pt2.x - pt1.x);
-		int disY = abs(pt2.y - pt1.y);
+		int disX = abs(pt2.m_x - pt1.m_x);
+		int disY = abs(pt2.m_y - pt1.m_y);
 
 		// 记录步进点
-		int xNow = pt1.x;
-		int yNow = pt1.y;
+		int xNow = pt1.m_x;
+		int yNow = pt1.m_y;
 
 		int stepX = 0;
 		int stepY = 0;
 
 		// 判断两个方向步进的正负
-		if (pt1.x < pt2.x)
+		if (pt1.m_x < pt2.m_x)
 		{
 			stepX = 1;
 		}
@@ -36,7 +36,7 @@ namespace GT
 			stepX = -1;
 
 		}
-		if (pt1.y < pt2.y)
+		if (pt1.m_y < pt2.m_y)
 		{
 			stepY = 1;
 		}
@@ -61,6 +61,17 @@ namespace GT
 
 		for (int i = 0; i < sumStep; i++)
 		{
+			RGBA _color;
+			float _scale;
+			if (useXStep)
+			{
+				_scale = (float)(xNow - pt1.m_x) / (float)(pt2.m_x - pt1.m_x);
+			}
+			else
+			{
+				_scale = (float)(yNow - pt1.m_y) / (float)(pt2.m_y - pt1.m_y);
+			}
+			_color = colorLerp(pt1.m_color, pt2.m_color, _scale);
 			drawPoint(xNow, yNow, _color);
 			if (p >= 0) // k > 1的情况
 			{

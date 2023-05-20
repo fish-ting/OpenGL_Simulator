@@ -26,6 +26,25 @@ namespace GT
 		}
 	};
 
+	class Point
+	{
+	public:
+		int m_x;
+		int m_y;
+		RGBA m_color;
+		Point(int _x, int _y, RGBA _color)
+		{
+			m_x = _x;
+			m_y = _y;
+			m_color = _color;
+		}
+
+		~Point()
+		{
+
+		}
+	};
+
 	
 	class Canvas
 	{
@@ -67,7 +86,18 @@ namespace GT
 		void drawPoint(int x, int y, RGBA _color);
 
 		// 画线，属于canvas画布本身应该存在的基本功能
-		void drawLine(intV2 pt1, intV2 pt2, RGBA _color);
+		void drawLine(Point pt1, Point pt2);
+
+		// 颜色插值计算
+		inline RGBA colorLerp(RGBA _color1, RGBA _color2, float _scale)
+		{
+			RGBA _color;
+			_color.m_r = _color1.m_r + (float)(_color2.m_r - _color1.m_r) * _scale;
+			_color.m_g = _color1.m_r + (float)(_color2.m_g - _color1.m_g) * _scale;
+			_color.m_b = _color1.m_r + (float)(_color2.m_b - _color1.m_b) * _scale;
+			_color.m_a = _color1.m_r + (float)(_color2.m_a - _color1.m_a) * _scale;
+			return _color;
+		}
 	};
 }
 
