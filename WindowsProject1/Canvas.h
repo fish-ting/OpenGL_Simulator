@@ -63,18 +63,11 @@ namespace GT
 			}
 		}
 
-		// 画点，属于canvas画布本身应该存在的功能方法
-		void drawPoint(int x, int y, RGBA _color)
-		{
-			if (x < 0 || x >= m_width || y < 0 || y >= m_height)
-			{
-				return;
-			}
+		// 画点，属于canvas画布本身应该存在的基本功能
+		void drawPoint(int x, int y, RGBA _color);
 
-			m_buffer[y * m_width + x] = _color;
-		}
-
-
+		// 画线，属于canvas画布本身应该存在的基本功能
+		void drawLine(intV2 pt1, intV2 pt2, RGBA _color);
 	};
 }
 

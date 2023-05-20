@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "WindowsProject1.h"
 #include "Canvas.h"
+#include <math.h>
 
 #define MAX_LOADSTRING 100
 
@@ -103,14 +104,20 @@ void Render()
 {
     _canvas->clear();
 
-    for (int x = 0; x < wWidth; x++)
+    
+
+    GT::intV2 pt1(100, 100);
+    float r = 50;
+    for (int i = 0; i < 360; i ++)
     {
-        for (int y = 0; y < wHeight; y++)
-        {
-            GT::RGBA _color(rand()%255, rand() % 255, rand() % 255, 1);
-            _canvas->drawPoint(x, y, _color);
-        }
+        int x = r * sin(i) + pt1.x;
+        int y = r * cos(i) + pt1.y;
+        GT::intV2 pt2(x, y);
+        GT::RGBA _color(rand() % 255, rand() % 255, rand() % 255, 0);
+        _canvas->drawLine(pt1, pt2, _color);
     }
+
+    //_canvas->drawLine(GT::intV2(100, 100), GT::intV2(150, 180), GT::RGBA(255, 0, 0, 0));
 
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
