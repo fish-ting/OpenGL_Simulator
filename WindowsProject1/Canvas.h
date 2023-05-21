@@ -17,7 +17,7 @@ namespace GT
 		RGBA(byte _r = 255,
 			byte _g = 255,
 			byte _b = 255,
-			byte _a = 255 )
+			byte _a = 1 )
 		{
 			m_r = _r;
 			m_g = _g;
@@ -88,17 +88,20 @@ namespace GT
 		// 画线，属于canvas画布本身应该存在的基本功能
 		void drawLine(Point pt1, Point pt2);
 
-		// 画三角形，属于canvas画布本身应该存在的基本功能
+		// 画三角形，属于canvas画布本身应该存在的基本功能（最小包围盒遍历）
 		void drawTriangle(Point pt1, Point pt2, Point pt3);
+
+		// 优化三角形扫描算法：1）画平底三角形
+		void drawTriangleFlat(Point ptFlat1, Point ptFlat2, Point pt);
 
 		// 颜色插值计算
 		inline RGBA colorLerp(RGBA _color1, RGBA _color2, float _scale)
 		{
 			RGBA _color;
 			_color.m_r = _color1.m_r + (float)(_color2.m_r - _color1.m_r) * _scale;
-			_color.m_g = _color1.m_r + (float)(_color2.m_g - _color1.m_g) * _scale;
-			_color.m_b = _color1.m_r + (float)(_color2.m_b - _color1.m_b) * _scale;
-			_color.m_a = _color1.m_r + (float)(_color2.m_a - _color1.m_a) * _scale;
+			_color.m_g = _color1.m_g + (float)(_color2.m_g - _color1.m_g) * _scale;
+			_color.m_b = _color1.m_b + (float)(_color2.m_b - _color1.m_b) * _scale;
+			_color.m_a = _color1.m_a + (float)(_color2.m_a - _color1.m_a) * _scale;
 			return _color;
 		}
 	};

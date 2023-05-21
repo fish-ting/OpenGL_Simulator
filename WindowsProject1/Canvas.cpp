@@ -140,4 +140,55 @@ namespace GT
 		}
 
 	}
+
+	void Canvas::drawTriangleFlat(Point ptFlat1, Point ptFlat2, Point pt)
+	{
+		float k1 = 0;
+		float k2 = 0;
+
+		if (ptFlat1.m_x != pt.m_x) // 第一条边的斜率不为0时
+		{
+			k1 = (float)(ptFlat1.m_y - pt.m_y) / (float)(ptFlat1.m_x - pt.m_x);
+		}
+		if (ptFlat2.m_x != pt.m_x) // 第二条边的斜率不为0时
+		{
+			k2 = (float)(ptFlat2.m_y - pt.m_y) / (float)(ptFlat2.m_x - pt.m_x);
+		}
+
+		// 使用公共点pt计算 b 值
+		float b1 = (float)pt.m_y - (float)pt.m_x * k1;
+		float b2 = (float)pt.m_y - (float)pt.m_x * k2;
+
+		int yStart = MIN(pt.m_y, ptFlat1.m_y);
+		int yEnd   = MAX(pt.m_y, ptFlat1.m_y);
+
+		for (int y = yStart; y <= yEnd; y++)
+		{
+			int x1 = 0;
+			if (k1 == 0)
+			{
+				x1 = ptFlat1.m_x; // 第一条边斜率为0时
+			}
+			else
+			{
+				x1 = ((float)y - b1) / k1;
+			}
+
+			int x2 = 0;
+			if (k2 == 0)
+			{
+				x2 = ptFlat2.m_x; // 第二条边斜率为0时
+			}
+			else
+			{
+				x2 = ((float)y - b2) / k2;
+			}
+
+			// 找到每条步进的边相交的两个点
+			Point pt1(x1, y, RGBA(255, 0, 0, 1));
+			Point pt2(x2, y, RGBA(255, 0, 0, 1));
+
+			drawLine(pt1, pt2);
+		}
+	}
 }

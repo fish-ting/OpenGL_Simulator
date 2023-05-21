@@ -1,6 +1,6 @@
 ﻿  WindowsProject1.cpp
-E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(98,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
-E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(99,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
-E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(100,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
 E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(101,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(102,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(103,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(104,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
   WindowsProject1.vcxproj -> E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\x64\Debug\WindowsProject1.exe
