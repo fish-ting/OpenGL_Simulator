@@ -19,6 +19,7 @@ HDC hMem; // hDC的备用
 GT::Canvas* _canvas = nullptr;
 GT::Image* _image = NULL;
 GT::Image* _bkImage = NULL;
+GT::Image* _zoomImage = NULL;
 
 // 窗口的基本性质
 HWND hWnd;
@@ -87,7 +88,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _canvas = new GT::Canvas(wWidth, wHeight, buffer);
     _bkImage = GT::Image::readFromFile("resource/bk.jpg");
     _image = GT::Image::readFromFile("resource/fish_alpha.psd");
-    _image->setAlpha(0.5);
+    _zoomImage = GT::Image::zoomImage(_image, 2, 2);
+    //_image->setAlpha(0.5);
 
     MSG msg;
 
@@ -111,7 +113,7 @@ void Render()
     _canvas->clear();
     _canvas->drawImage(0, 0, _bkImage);
     _canvas->setBlend(true);
-    _canvas->drawImage(-20, -280, _image);
+    _canvas->drawImage(-20, -280, _zoomImage);
     
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);

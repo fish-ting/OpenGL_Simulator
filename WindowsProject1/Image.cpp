@@ -30,4 +30,32 @@ namespace GT
 		stbi_image_free(bits);
 		return m_image;
 	}
+
+	// 功能函数：处理图片缩放
+	Image* Image::zoomImage(const Image* _image, float _zoomX, float _zoomY)
+	{
+		int _width = _image->getWidth() * _zoomX;
+		int _height = _image->getHeight() * _zoomY;
+		byte* _data = new byte[_width * _height * sizeof(RGBA)];
+		Image* _resultImage = NULL;
+
+		for (int i = 0; i < _width; i++)
+		{
+			for (int j = 0; j < _height; j++)
+			{
+				// 找到原图中对应的像素点
+				int _imageX = (float)i / _zoomX;
+				int _imageY = (float)j / _zoomY;
+
+				_imageX = _imageX < _image->getWidth() ? _imageX : (_image->getWidth() - 1);
+				_imageY = _imageY < _image->getHeight() ? _imageY : (_image->getHeight() - 1);
+
+				RGBA _color = _image->getColor(_imageX, _imageY);
+				memcpy(_data + (j * _width + i) * sizeof(RGBA), &_color, sizeof(RGBA));
+			}
+		}
+		_resultImage = new Image(_width, _height, _data);
+		delete[] _data;
+		return _resultImage;
+	}
 }

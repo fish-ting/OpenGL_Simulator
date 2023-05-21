@@ -33,7 +33,7 @@ namespace GT
 			return m_alpha;
 		}
 
-		RGBA getColor(int x, int y)
+		RGBA getColor(int x, int y)const
 		{
 			if (x < 0 || x > m_width - 1 || y < 0 || y > m_height - 1)
 			{
@@ -65,6 +65,9 @@ namespace GT
 	public:
 		// 功能函数：从图片路径读入指定图片
 		static Image* readFromFile(const char* _fileName);
+
+		// 功能函数：处理图片缩放
+		static Image* zoomImage(const Image* _image, float _zoomX, float _zoomY);
 	};
 }
 
