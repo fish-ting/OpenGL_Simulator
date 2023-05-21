@@ -103,17 +103,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 void Render()
 {
     _canvas->clear();
-    // 测试1
-    GT::Point pt1(100, 100, GT::RGBA(255, 0, 0, 0));
+    // 测试 1
+    GT::Point pt1(150, 150, GT::RGBA(255, 0, 0, 0));
     GT::Point pt2(200, 100, GT::RGBA(255, 0, 0, 0));
-    GT::Point pt(150, 150, GT::RGBA(255, 0, 0, 0));
-    _canvas->drawTriangleFlat(pt1, pt2, pt);
-
-    // 测试2
-    GT::Point pt4(150, 100, GT::RGBA(255, 0, 0, 0));
-    GT::Point pt5(200, 100, GT::RGBA(255, 0, 0, 0));
-    GT::Point pt6(150, 50, GT::RGBA(255, 0, 0, 0));
-    _canvas->drawTriangleFlat(pt4, pt5, pt6);
+    GT::Point pt3(150, 50, GT::RGBA(255, 0, 0, 0));
+    _canvas->drawTriangle(pt1, pt2, pt3);
 
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);

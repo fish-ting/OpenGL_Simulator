@@ -2,7 +2,7 @@
 namespace GT
 {
 	template<typename T>
-	void swap(T& a, T& b)
+	void swapT(T& a, T& b)
 	{
 		T tmp = a;
 		a = b;
@@ -12,7 +12,7 @@ namespace GT
 	#define MIN(a, b) ( (a) < (b) ? (a) : (b))
 	#define MAX(a, b) ( (a) > (b) ? (a) : (b))
 
-	#define SWAP_INT(a, b) swap<int>(a, b)
+	#define SWAP_INT(a, b) swapT<int>(a, b)
 
 
 	template<typename T>

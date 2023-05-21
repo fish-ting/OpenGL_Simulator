@@ -1,5 +1,7 @@
 #include "Canvas.h"
 #include <math.h>
+#include <vector>
+#include <algorithm>
 
 namespace GT
 {
@@ -98,8 +100,8 @@ namespace GT
 		}
 	}
 
-	// 画三角形，属于canvas画布本身应该存在的基本功能
-	void Canvas::drawTriangle(Point pt1, Point pt2, Point pt3)
+	// 画三角形，属于canvas画布本身应该存在的基本功能，基本遍历算法
+	void Canvas::drawTriangle_scan(Point pt1, Point pt2, Point pt3)
 	{
 		// 构建包围体
 		int left   = MIN(pt3.m_x, MIN(pt1.m_x, pt2.m_x));
@@ -141,6 +143,62 @@ namespace GT
 
 	}
 
+	// 优化画三角形算法：画任意三角形
+	void Canvas::drawTriangle(Point pt1, Point pt2, Point pt3)
+	{
+		std::vector<Point> pVec;
+		pVec.push_back(pt1);
+		pVec.push_back(pt2);
+		pVec.push_back(pt3);
+
+		// 按点的 Y 值进行排序，从大到小排序
+		std::sort(pVec.begin(), pVec.end(), [](const Point& pt1, const Point& pt2) {return pt1.m_y > pt2.m_y; });
+		
+		Point ptMax = pVec[0];
+		Point ptMid = pVec[1];
+		Point ptMin = pVec[2];
+		
+		// 特殊处理：已经是平底三角形
+		if (ptMax.m_y == ptMid.m_y)
+		{
+			drawTriangleFlat(ptMax, ptMid, ptMin);
+			return;
+		}
+		// 特殊处理：已经是平顶三角形
+		if (ptMin.m_y == ptMid.m_y)
+		{
+			drawTriangleFlat(ptMin, ptMid, ptMax);
+			return;
+		}
+
+		// 判断是否有斜率
+		float k = 0;
+		if (ptMax.m_x != ptMin.m_x)
+		{
+			// 最长边
+			k = (float)(ptMax.m_y - ptMin.m_y) / (float)(ptMax.m_x - ptMin.m_x);
+		}
+		float b = (float)ptMax.m_y - k * (float)ptMax.m_x;
+
+		// 求割线的焦点
+		Point newPoint(0, 0, RGBA(255, 0, 0));
+		newPoint.m_y = ptMid.m_y;
+		if (k == 0)
+		{
+			newPoint.m_x = ptMax.m_x;
+		}
+		else
+		{
+			newPoint.m_x = ((float)newPoint.m_y - b) / k;
+		}
+
+		drawTriangleFlat(ptMid, newPoint, ptMax);
+		drawTriangleFlat(ptMid, newPoint, ptMin);
+
+		return;
+	}
+
+	// 优化画三角形算法：画平底三角形
 	void Canvas::drawTriangleFlat(Point ptFlat1, Point ptFlat2, Point pt)
 	{
 		float k1 = 0;

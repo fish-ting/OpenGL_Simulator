@@ -89,10 +89,13 @@ namespace GT
 		void drawLine(Point pt1, Point pt2);
 
 		// 画三角形，属于canvas画布本身应该存在的基本功能（最小包围盒遍历）
-		void drawTriangle(Point pt1, Point pt2, Point pt3);
+		void drawTriangle_scan(Point pt1, Point pt2, Point pt3);
 
 		// 优化三角形扫描算法：1）画平底三角形
 		void drawTriangleFlat(Point ptFlat1, Point ptFlat2, Point pt);
+
+		// 优化三角形扫描算法：2）画任意三角形
+		void drawTriangle(Point ptFlat1, Point ptFlat2, Point pt);
 
 		// 颜色插值计算
 		inline RGBA colorLerp(RGBA _color1, RGBA _color2, float _scale)
