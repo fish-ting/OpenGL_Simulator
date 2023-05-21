@@ -24,7 +24,7 @@ GT::Image* _zoomImage = NULL;
 // 窗口的基本性质
 HWND hWnd;
 int wWidth = 800;
-int wHeight = 600;
+int wHeight = 800;
 
 // 全局处理函数
 void Render();
@@ -88,8 +88,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _canvas = new GT::Canvas(wWidth, wHeight, buffer);
     _bkImage = GT::Image::readFromFile("resource/bk.jpg");
     _image = GT::Image::readFromFile("resource/fish_alpha.psd");
-    _zoomImage = GT::Image::zoomImage(_image, 2, 2);
-    //_image->setAlpha(0.5);
+    _zoomImage = GT::Image::zoomImage(_image, 1.5, 1.5);
+    //_zoomImage = GT::Image::simpleZoomImage(_image, 1.5, 1.5);
 
     MSG msg;
 

@@ -66,7 +66,10 @@ namespace GT
 		// 功能函数：从图片路径读入指定图片
 		static Image* readFromFile(const char* _fileName);
 
-		// 功能函数：处理图片缩放
+		// 功能函数：处理图片缩放，线性插值算法
+		static Image* simpleZoomImage(const Image* _image, float _zoomX, float _zoomY);
+
+		// 功能函数：处理图片缩放，双线性插值算法
 		static Image* zoomImage(const Image* _image, float _zoomX, float _zoomY);
 	};
 }
