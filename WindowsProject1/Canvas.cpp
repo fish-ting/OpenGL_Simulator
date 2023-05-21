@@ -387,12 +387,29 @@ namespace GT
 		{
 			for (int v = 0; v < _image->getHeight(); v++)
 			{
-				RGBA _color = _image->getColor(u, v);
-				if (_color.m_a > m_alphaLimit)
+				RGBA _srcColor = _image->getColor(u, v);
+				if (!m_useBlend) 
 				{
-					drawPoint(_x + u, _y + v, _color);
+					drawPoint(_x + u, _y + v, _srcColor); // 未开启颜色混合
+				}
+				else
+				{
+					RGBA _dstColor = getColor(_x + u, _y + v);
+					RGBA _finalColor = colorLerp(_dstColor, _srcColor, (float)_srcColor.m_a / 255.0);
+					drawPoint(_x + u, _y + v, _finalColor);
 				}
 			}
 		}
+	}
+
+	// 获取当前颜色buffer区中的颜色
+	RGBA Canvas::getColor(int x, int y)
+	{
+		if (x < 0 || x >= m_width || y < 0 || y >= m_height)
+		{
+			return RGBA(0, 0, 0, 0);;
+		}
+
+		return m_buffer[y * m_width + x];
 	}
 }

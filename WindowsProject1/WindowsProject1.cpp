@@ -107,11 +107,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 void Render()
 {
     _canvas->clear();
-    _canvas->setAlphaLimit(10);
+    _canvas->setBlend(true);
     _canvas->drawImage(100, 100, _image);
     
-
-
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
 }

@@ -34,6 +34,7 @@ namespace GT
 		RGBA* m_buffer;
 
 		byte m_alphaLimit; // alpha值大于该值的像素才可被绘制
+		bool m_useBlend;
 	
 	public:
 		Canvas(int _width, int _height, void* _buffer) // 构造函数
@@ -49,6 +50,7 @@ namespace GT
 			m_width = _width;
 			m_height = _height;
 			m_buffer = (RGBA*)_buffer;
+			m_useBlend = false; // 默认情况下不开颜色混合
 			
 		}
 
@@ -66,6 +68,9 @@ namespace GT
 
 		// 画点，属于canvas画布本身应该存在的基本功能
 		void drawPoint(int x, int y, RGBA _color);
+
+		// 获取当前颜色buffer区中的颜色
+		RGBA getColor(int x, int y);
 
 		// 画线，属于canvas画布本身应该存在的基本功能
 		void drawLine(Point pt1, Point pt2);
@@ -103,6 +108,12 @@ namespace GT
 		void setAlphaLimit(byte _limit)
 		{
 			m_alphaLimit = _limit;
+		}
+
+		// 是否开启alpha混合
+		void setBlend(bool _useBlend)
+		{
+			m_useBlend = _useBlend;
 		}
 
 	};
