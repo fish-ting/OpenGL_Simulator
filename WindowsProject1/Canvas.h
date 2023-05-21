@@ -32,6 +32,8 @@ namespace GT
 		int m_width;
 		int m_height;
 		RGBA* m_buffer;
+
+		byte m_alphaLimit; // alpha值大于该值的像素才可被绘制
 	
 	public:
 		Canvas(int _width, int _height, void* _buffer) // 构造函数
@@ -96,6 +98,13 @@ namespace GT
 
 		// 将图片画到画布上
 		void drawImage(int _x, int _y, Image* _image);
+
+		// 是否开启alpha测试
+		void setAlphaLimit(byte _limit)
+		{
+			m_alphaLimit = _limit;
+		}
+
 	};
 }
 

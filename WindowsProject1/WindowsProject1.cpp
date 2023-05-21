@@ -85,7 +85,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // canvas和buffer的概念应该是一样的
     _canvas = new GT::Canvas(wWidth, wHeight, buffer);
 
-    _image = GT::Image::readFromFile("resource/fish.jpg");
+    _image = GT::Image::readFromFile("resource/fish_alpha.psd");
 
     MSG msg;
 
@@ -107,7 +107,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 void Render()
 {
     _canvas->clear();
-    
+    _canvas->setAlphaLimit(10);
     _canvas->drawImage(100, 100, _image);
     
 
