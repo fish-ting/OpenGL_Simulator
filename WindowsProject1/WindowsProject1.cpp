@@ -5,6 +5,7 @@
 #include "WindowsProject1.h"
 #include "Canvas.h"
 #include <math.h>
+#include "Image.h"
 
 #define MAX_LOADSTRING 100
 
@@ -16,11 +17,12 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
 HDC hDC;  // 显示器直接获取每个像素的来源
 HDC hMem; // hDC的备用
 GT::Canvas* _canvas = nullptr;
+GT::Image* _image = NULL;
 
 // 窗口的基本性质
 HWND hWnd;
-int wWidth = 800;
-int wHeight = 600;
+int wWidth = 1000;
+int wHeight = 1000;
 
 // 全局处理函数
 void Render();
@@ -83,6 +85,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // canvas和buffer的概念应该是一样的
     _canvas = new GT::Canvas(wWidth, wHeight, buffer);
 
+    _image = GT::Image::readFromFile("resource/fish.jpg");
+
     MSG msg;
 
     // 主消息循环:
@@ -103,11 +107,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 void Render()
 {
     _canvas->clear();
-    // 测试
-    GT::Point pt1(-100, -150, GT::RGBA(255, 0, 0, 0));
-    GT::Point pt2(500, 50, GT::RGBA(0, 255, 0, 0));
-    GT::Point pt3(250, 1500, GT::RGBA(0, 0, 255, 0));
-    _canvas->drawTriangle(pt1, pt2, pt3);
+    
+    _canvas->drawImage(100, 100, _image);
+    
+
 
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
@@ -154,7 +157,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
    // 生成窗口实例
-   hWnd = CreateWindowW(szWindowClass, szTitle, WS_POPUP,
+   hWnd = CreateWindowW(szWindowClass, szTitle, WS_POPUP || WS_OVERLAPPED,
       CW_USEDEFAULT, 0, wWidth, wHeight, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
