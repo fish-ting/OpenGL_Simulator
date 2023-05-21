@@ -212,6 +212,9 @@ namespace GT
 			newPoint.m_x = ((float)newPoint.m_y - b) / k;
 		}
 
+		float s = (float)(newPoint.m_y - ptMin.m_y) / (float)(ptMax.m_y - ptMin.m_y);
+		newPoint.m_color = colorLerp(ptMin.m_color, ptMax.m_color, s);
+
 		drawTriangleFlat(ptMid, newPoint, ptMax);
 		drawTriangleFlat(ptMid, newPoint, ptMin);
 
@@ -239,6 +242,39 @@ namespace GT
 
 		int yStart = MIN(pt.m_y, ptFlat1.m_y);
 		int yEnd   = MAX(pt.m_y, ptFlat1.m_y);
+
+		// 颜色插值计算
+		RGBA colorStart1;
+		RGBA colorEnd1;
+
+		RGBA colorStart2;
+		RGBA colorEnd2;
+
+		if (pt.m_y < ptFlat1.m_y)
+		{
+			yStart = pt.m_y;
+			yEnd = ptFlat1.m_y;
+
+			colorStart1 = pt.m_color;
+			colorEnd1 = ptFlat1.m_color;
+
+			colorStart2 = pt.m_color;
+			colorEnd2 = ptFlat2.m_color;
+		}
+		else
+		{
+			yStart = ptFlat1.m_y;
+			yEnd = pt.m_y;
+
+			colorStart1 = ptFlat1.m_color;
+			colorEnd1 = pt.m_color;
+
+			colorStart2 = ptFlat2.m_color;
+			colorEnd2 = pt.m_color;
+		}
+
+		float yColorStep = 1.0 / (float)(yEnd - yStart);
+		int yColorStart = yStart;
 
 		// 优化计算
 		if (yStart < 0) {
@@ -292,8 +328,12 @@ namespace GT
 			}
 
 			// 找到每条步进的边相交的两个点
-			Point pt1(x1, y, RGBA(255, 0, 0, 1));
-			Point pt2(x2, y, RGBA(255, 0, 0, 1));
+			float s = (float)(y - yColorStart) * yColorStep;
+			RGBA _color1 = colorLerp(colorStart1, colorEnd1, s);
+			RGBA _color2 = colorLerp(colorStart2, colorEnd2, s);
+
+			Point pt1(x1, y, _color1);
+			Point pt2(x2, y, _color2);
 
 			drawLine(pt1, pt2);
 		}
