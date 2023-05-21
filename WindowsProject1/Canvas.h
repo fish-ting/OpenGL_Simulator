@@ -1,6 +1,7 @@
 #pragma once
 #include <string.h>
 #include "GTMATH.h"
+#include <vector>
 // 与系统命名区分开
 namespace GT
 {
@@ -107,6 +108,12 @@ namespace GT
 			_color.m_a = _color1.m_a + (float)(_color2.m_a - _color1.m_a) * _scale;
 			return _color;
 		}
+
+		// 优化计算：判断三角形是否在矩形画布中
+		bool judgeInRect(Point pt, GT_RECT _rect);
+
+		// 优化计算：判断点是否在三角形中
+		bool judgeInTriangle(Point pt, std::vector<Point> _ptArray);
 	};
 }
 

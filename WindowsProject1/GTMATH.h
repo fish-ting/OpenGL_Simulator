@@ -39,4 +39,23 @@ namespace GT
 
 	typedef unsigned int   uint;
 	typedef unsigned char  byte;
+
+	struct GT_RECT
+	{
+		int m_left;
+		int m_right;
+		int m_top;
+		int m_bottom;
+
+		GT_RECT(int _left = 0,
+				int _right = 0,
+				int _top = 0,
+				int _bottom = 0)
+		{
+			m_left = _left;
+			m_right = _right;
+			m_top = _top;
+			m_bottom = _bottom;
+		}
+	};
 }

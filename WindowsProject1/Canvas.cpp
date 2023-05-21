@@ -140,7 +140,6 @@ namespace GT
 				}
 			}
 		}
-
 	}
 
 	// 优化画三角形算法：画任意三角形
@@ -151,6 +150,27 @@ namespace GT
 		pVec.push_back(pt2);
 		pVec.push_back(pt3);
 
+		GT_RECT _rect(0, m_width, 0, m_height);
+		// 优化判断：三角形是否在画布矩形上(简单裁剪)
+		while (true)
+		{
+			if (judgeInRect(pt1, _rect) || judgeInRect(pt2, _rect) || judgeInRect(pt3, _rect))
+			{
+				break;
+			}
+
+			Point rpt1(0, 0, RGBA());
+			Point rpt2(0, m_width, RGBA());
+			Point rpt3(0, m_height, RGBA());
+			Point rpt4(m_width, m_height, RGBA());
+
+			if (judgeInTriangle(rpt1, pVec) || judgeInTriangle(rpt2, pVec) || judgeInTriangle(rpt3, pVec) || judgeInTriangle(rpt4, pVec))
+			{
+				break;
+			}
+			return;
+		}
+		
 		// 按点的 Y 值进行排序，从大到小排序
 		std::sort(pVec.begin(), pVec.end(), [](const Point& pt1, const Point& pt2) {return pt1.m_y > pt2.m_y; });
 		
@@ -220,6 +240,15 @@ namespace GT
 		int yStart = MIN(pt.m_y, ptFlat1.m_y);
 		int yEnd   = MAX(pt.m_y, ptFlat1.m_y);
 
+		// 优化计算
+		if (yStart < 0) {
+			yStart = 0;
+		}
+
+		if (yEnd > m_height) {
+			yEnd = m_height - 1;
+		}
+
 		for (int y = yStart; y <= yEnd; y++)
 		{
 			int x1 = 0;
@@ -232,6 +261,16 @@ namespace GT
 				x1 = ((float)y - b1) / k1;
 			}
 
+			// 剪裁 x1
+			if (x1 < 0)
+			{
+				x1 = 0;
+			}
+			if (x1 > m_width)
+			{
+				x1 = m_width - 1;
+			}
+
 			int x2 = 0;
 			if (k2 == 0)
 			{
@@ -242,11 +281,62 @@ namespace GT
 				x2 = ((float)y - b2) / k2;
 			}
 
+			// 剪裁 x2
+			if (x2 < 0)
+			{
+				x2 = 0;
+			}
+			if (x2 > m_width)
+			{
+				x2 = m_width - 1;
+			}
+
 			// 找到每条步进的边相交的两个点
 			Point pt1(x1, y, RGBA(255, 0, 0, 1));
 			Point pt2(x2, y, RGBA(255, 0, 0, 1));
 
 			drawLine(pt1, pt2);
 		}
+	}
+
+	// 优化：判断点是否在Rect中
+	bool Canvas::judgeInRect(Point pt, GT_RECT _rect)
+	{
+		if (pt.m_x > _rect.m_left && pt.m_x < _rect.m_right && pt.m_y > _rect.m_top && pt.m_y < _rect.m_bottom)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	// 优化计算：判断点是否在三角形中
+	bool Canvas::judgeInTriangle(Point pt, std::vector<Point> _ptArray)
+	{
+		Point pt1 = _ptArray[0];
+		Point pt2 = _ptArray[1];
+		Point pt3 = _ptArray[2];
+
+		int x = pt.m_x;
+		int y = pt.m_y;
+
+		// 计算直线斜率
+		float k1 = (float)(pt2.m_y - pt3.m_y) / (float)(pt2.m_x - pt3.m_x);
+		float k2 = (float)(pt1.m_y - pt3.m_y) / (float)(pt1.m_x - pt3.m_x);
+		float k3 = (float)(pt1.m_y - pt2.m_y) / (float)(pt1.m_x - pt2.m_x);
+
+		// 计算直线 b 值
+		float b1 = (float)pt2.m_y - k1 * (float)pt2.m_x;
+		float b2 = (float)pt3.m_y - k2 * (float)pt3.m_x;
+		float b3 = (float)pt1.m_y - k3 * (float)pt1.m_x;
+
+		// 循环判断是否在三角形范围内
+		float judge1 = (y - (k1 * x + b1)) * (pt1.m_y - (k1 * pt1.m_x + b1));
+		float judge2 = (y - (k2 * x + b2)) * (pt2.m_y - (k2 * pt2.m_x + b2));
+		float judge3 = (y - (k3 * x + b3)) * (pt3.m_y - (k3 * pt3.m_x + b3));
+
+		if (judge1 >= 0 && judge2 >= 0 && judge3 >= 0) {
+			return true;
+		}
+		return false;
 	}
 }
