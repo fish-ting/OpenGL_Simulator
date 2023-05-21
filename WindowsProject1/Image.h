@@ -10,6 +10,7 @@ namespace GT
 		int m_width;
 		int m_height;
 		RGBA* m_data;
+		float m_alpha;  // 外界控制alpha混合参数
 
 	public:
 		int getWidth()const
@@ -20,6 +21,16 @@ namespace GT
 		int getHeight()const
 		{
 			return m_height;
+		}
+
+		inline void setAlpha(float _alpha)
+		{
+			m_alpha = _alpha;
+		}
+
+		inline float getAlpha()
+		{
+			return m_alpha;
 		}
 
 		RGBA getColor(int x, int y)
@@ -40,6 +51,7 @@ namespace GT
 				m_data = new RGBA[m_width * m_height];
 				memcpy(m_data, _data, sizeof(RGBA) * m_width * m_height);
 			}
+			m_alpha = 1.0; // 默认情况下是目的颜色buffer区完全覆盖源颜色buffer区
 		}
 
 		~Image()

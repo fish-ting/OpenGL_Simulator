@@ -18,11 +18,12 @@ HDC hDC;  // 显示器直接获取每个像素的来源
 HDC hMem; // hDC的备用
 GT::Canvas* _canvas = nullptr;
 GT::Image* _image = NULL;
+GT::Image* _bkImage = NULL;
 
 // 窗口的基本性质
 HWND hWnd;
-int wWidth = 1000;
-int wHeight = 1000;
+int wWidth = 800;
+int wHeight = 600;
 
 // 全局处理函数
 void Render();
@@ -84,8 +85,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // canvas和buffer的概念应该是一样的
     _canvas = new GT::Canvas(wWidth, wHeight, buffer);
-
+    _bkImage = GT::Image::readFromFile("resource/bk.jpg");
     _image = GT::Image::readFromFile("resource/fish_alpha.psd");
+    _image->setAlpha(0.5);
 
     MSG msg;
 
@@ -107,8 +109,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 void Render()
 {
     _canvas->clear();
+    _canvas->drawImage(0, 0, _bkImage);
     _canvas->setBlend(true);
-    _canvas->drawImage(100, 100, _image);
+    _canvas->drawImage(-20, -280, _image);
     
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);

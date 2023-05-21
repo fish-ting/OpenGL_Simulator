@@ -7,5 +7,5 @@ E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.cp
 E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.cpp(276,20): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
 E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.cpp(297,26): warning C4244: “=”: 从“float”转换到“int”，可能丢失数据
 E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.cpp(317,26): warning C4244: “=”: 从“float”转换到“int”，可能丢失数据
-E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.cpp(398,78): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.cpp(398,22): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
   WindowsProject1.vcxproj -> E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\x64\Debug\WindowsProject1.exe
