@@ -12,11 +12,14 @@ namespace GT
 		int m_x;
 		int m_y;
 		RGBA m_color;
-		Point(int _x, int _y, RGBA _color)
+		floatV2 m_uv;
+
+		Point(int _x = 0, int _y = 0, RGBA _color = RGBA(0, 0, 0, 0), floatV2 _uv = floatV2(0.0, 0.0))
 		{
 			m_x = _x;
 			m_y = _y;
 			m_color = _color;
+			m_uv = _uv;
 		}
 
 		~Point()
@@ -35,6 +38,10 @@ namespace GT
 
 		byte m_alphaLimit; // alpha值大于该值的像素才可被绘制
 		bool m_useBlend;
+		bool m_enableTexture; //是否启用纹理贴图
+
+		const Image* m_texture; // 当前使用的纹理
+		Image::TEXTURE_TYPE m_texType; // 纹理取样的方式：clamp or repeat
 	
 	public:
 		Canvas(int _width, int _height, void* _buffer) // 构造函数
@@ -51,6 +58,7 @@ namespace GT
 			m_height = _height;
 			m_buffer = (RGBA*)_buffer;
 			m_useBlend = false; // 默认情况下不开颜色混合
+			m_enableTexture = false; // 默认情况下不使用纹理
 			
 		}
 
@@ -95,6 +103,15 @@ namespace GT
 			return _color;
 		}
 
+		// UV插值计算
+		inline floatV2 uvLerp(floatV2 _uv1, floatV2 _uv2, float _scale)
+		{
+			floatV2 _uv;
+			_uv.x = _uv1.x + (_uv2.x - _uv1.x) * _scale;
+			_uv.y = _uv1.y + (_uv2.y - _uv1.y) * _scale;
+			return _uv;
+		}
+
 		// 优化计算：判断三角形是否在矩形画布中
 		bool judgeInRect(Point pt, GT_RECT _rect);
 
@@ -116,6 +133,23 @@ namespace GT
 			m_useBlend = _useBlend;
 		}
 
+		// 是否开启纹理
+		void enableTexture(bool _enable)
+		{
+			m_enableTexture = _enable;
+		}
+
+		// 绑定纹理
+		void bindTexture(const Image* _image)
+		{
+			m_texture = _image;
+		}
+
+		// 
+		void setTextureType(Image::TEXTURE_TYPE _type)
+		{
+			m_texType = _type;
+		}
 	};
 }
 

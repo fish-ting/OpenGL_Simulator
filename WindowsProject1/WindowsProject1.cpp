@@ -23,8 +23,10 @@ GT::Image* _zoomImage = NULL;
 
 // 窗口的基本性质
 HWND hWnd;
-int wWidth = 800;
-int wHeight = 800;
+int wWidth = 1200;
+int wHeight = 600;
+
+float speed = 0.01f;
 
 // 全局处理函数
 void Render();
@@ -87,9 +89,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // canvas和buffer的概念应该是一样的
     _canvas = new GT::Canvas(wWidth, wHeight, buffer);
     _bkImage = GT::Image::readFromFile("resource/bk.jpg");
-    _image = GT::Image::readFromFile("resource/fish_alpha.psd");
-    _zoomImage = GT::Image::zoomImage(_image, 1.5, 1.5);
-    //_zoomImage = GT::Image::simpleZoomImage(_image, 1.5, 1.5);
 
     MSG msg;
 
@@ -111,9 +110,36 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 void Render()
 {
     _canvas->clear();
-    _canvas->drawImage(0, 0, _bkImage);
-    _canvas->setBlend(true);
-    _canvas->drawImage(-20, -280, _zoomImage);
+    
+    GT::Point ptArray1[] =
+    {
+        {0, 0, GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
+        {1180, 0, GT::RGBA(255, 0 , 0), GT::floatV2(1.0, 0)},
+        {1180, 599, GT::RGBA(255, 0 , 0), GT::floatV2(1.0, 1.0)}
+    };
+
+    GT::Point ptArray2[] =
+    {
+        {0, 0, GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
+        {0, 599, GT::RGBA(255, 0 , 0), GT::floatV2(0, 1.0)},
+        {1180, 599, GT::RGBA(255, 0 , 0), GT::floatV2(1.0, 1.0)}
+    };
+    
+    
+
+    for (int i = 0; i < 3; i++)
+    {
+        ptArray1[i].m_uv.x += speed;
+        ptArray2[i].m_uv.x += speed;
+    }
+
+    speed += 0.003;
+
+    _canvas->enableTexture(true);
+    _canvas->bindTexture(_bkImage);
+    _canvas->setTextureType(GT::Image::TX_REPEAT);
+    _canvas->drawTriangle(ptArray1[0], ptArray1[1], ptArray1[2]);
+    _canvas->drawTriangle(ptArray2[0], ptArray2[1], ptArray2[2]);
     
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);

@@ -13,6 +13,13 @@ namespace GT
 		float m_alpha;  // 外界控制alpha混合参数
 
 	public:
+		enum TEXTURE_TYPE
+		{
+			TX_CLAMP_TO_EDGE = 0,
+			TX_REPEAT = 1
+		};
+
+	public:
 		int getWidth()const
 		{
 			return m_width;
@@ -38,6 +45,28 @@ namespace GT
 			if (x < 0 || x > m_width - 1 || y < 0 || y > m_height - 1)
 			{
 				return RGBA(0, 0, 0, 1);
+			}
+			return m_data[m_width * y + x];
+		}
+
+		RGBA getColorByUV(float _u, float _v, TEXTURE_TYPE _type)const
+		{
+			int x = (float)m_width * _u;
+			int y = (float)m_height * _v;
+
+			switch (_type)
+			{
+			case TX_CLAMP_TO_EDGE:
+				// UV的 clamp 模式
+				x = x < m_width ? x : (m_width - 1);
+				y = y < m_height ? y : (m_height - 1);
+				break;
+			case TX_REPEAT:
+				x = x % m_width;
+				y = y % m_height;
+				break;
+			default:
+				break;
 			}
 			return m_data[m_width * y + x];
 		}
