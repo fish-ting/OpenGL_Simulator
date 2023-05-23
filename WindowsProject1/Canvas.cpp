@@ -492,14 +492,17 @@ namespace GT
 	void Canvas::gtDrawArray(DRAW_MODE _mode, int _first, int _count)
 	{
 		// 直线
-		Point pt0, pt1;
-		byte* _vertexData = m_state.m_vertexData.m_data;
-		byte* _colorData = m_state.m_colorData.m_data;
+		Point pt0, pt1, pt2;
+		byte* _vertexData = m_state.m_vertexData.m_data + _first * m_state.m_vertexData.m_stride;
+		byte* _colorData = m_state.m_colorData.m_data + _first * m_state.m_colorData.m_stride;
+		byte* _texCoordData = m_state.m_texCoordData.m_data + _first * m_state.m_texCoordData.m_stride;
+		_count = _count - _first;
 		switch (_mode)
 		{
 		case GT::GT_LINE:
 		{
-			for (int i = 0; i < _count - 2; i += 2) // 每条线一次消耗两个点
+			_count = _count / 2;
+			for (int i = 0; i < _count; i++) // 每条线一次消耗两个点
 			{
 				// 取点的坐标
 				float* _vertexDataFloat = (float*)_vertexData;
@@ -527,6 +530,57 @@ namespace GT
 		}
 			break;
 		case GT::GT_TRIANGLE:
+			_count = _count / 3;
+			for (int i = 0; i < _count; i++) // 每次消耗三个点
+			{
+				// 取点的坐标
+				float* _vertexDataFloat = (float*)_vertexData;
+				pt0.m_x = _vertexDataFloat[0];
+				pt0.m_y = _vertexDataFloat[1];
+				_vertexData += m_state.m_vertexData.m_stride;
+
+				_vertexDataFloat = (float*)_vertexData;
+				pt1.m_x = _vertexDataFloat[0];
+				pt1.m_y = _vertexDataFloat[1];
+				_vertexData += m_state.m_vertexData.m_stride;
+
+				_vertexDataFloat = (float*)_vertexData;
+				pt2.m_x = _vertexDataFloat[0];
+				pt2.m_y = _vertexDataFloat[1];
+				_vertexData += m_state.m_vertexData.m_stride;
+
+				// 取点的颜色
+				RGBA* _colorDataRGBA = (RGBA*)_colorData;
+				pt0.m_color = _colorDataRGBA[0];
+
+				_colorData += m_state.m_colorData.m_stride;
+
+				_colorDataRGBA = (RGBA*)_colorData;
+				pt1.m_color = _colorDataRGBA[0];
+
+				_colorData += m_state.m_colorData.m_stride;
+
+				_colorDataRGBA = (RGBA*)_colorData;
+				pt2.m_color = _colorDataRGBA[0];
+
+				_colorData += m_state.m_colorData.m_stride;
+				drawTriangle(pt0, pt1, pt2);
+
+				// 取点的UV
+				floatV2* _uvData = (floatV2*)_texCoordData;
+				pt0.m_uv = _uvData[0];
+				_texCoordData += m_state.m_texCoordData.m_stride;
+
+				_uvData = (floatV2*)_texCoordData;
+				pt1.m_uv = _uvData[0];
+				_texCoordData += m_state.m_texCoordData.m_stride;
+
+				_uvData = (floatV2*)_texCoordData;
+				pt2.m_uv = _uvData[0];
+				_texCoordData += m_state.m_texCoordData.m_stride;
+
+				drawTriangle(pt0, pt1, pt2);
+			}
 			break;
 		default:
 			break;

@@ -113,16 +113,23 @@ void Render()
     
     GT::Point ptArray[] =
     {
-        {0, 200, GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
-        {800, 200, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
-        {100, 600, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)},
-        {800, 300, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)},
-        {200, 150, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)}
+        {0, 0, GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
+        {1000, 0, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
+        {1000, 600, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)},
+        {0, 0, GT::RGBA(0, 0 , 255), GT::floatV2(0.0, 0.0)},
+        {0, 600, GT::RGBA(0, 0 , 255), GT::floatV2(0.0, 1.0)},
+        {1000, 600, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)}
     };
 
     _canvas->gtVertexPointer(2, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)ptArray);
     _canvas->gtColorPointer(1, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)&ptArray[0].m_color);
-    _canvas->gtDrawArray(GT::GT_LINE, 0, 5);
+    _canvas->gtTexCoordPointer(1, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)&ptArray[0].m_uv);
+    
+    _canvas->enableTexture(true);
+    _canvas->setTextureType(GT::Image::TX_CLAMP_TO_EDGE);
+    _canvas->bindTexture(_bkImage);
+
+    _canvas->gtDrawArray(GT::GT_TRIANGLE, 0, 6);
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
 }
