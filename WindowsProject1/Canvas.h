@@ -28,6 +28,60 @@ namespace GT
 		}
 	};
 
+	enum DATA_TYPE
+	{
+		GT_FlOAT = 0,
+		GT_INT = 1
+	};
+
+	enum  DRAW_MODE
+	{
+		GT_LINE = 0,
+		GT_TRIANGLE = 1
+	};
+
+	// 对传入状态机里的数据类型的模拟
+	struct DataElement
+	{
+		int m_size;
+		DATA_TYPE m_type;
+		int m_stride; // 步长
+		byte* m_data;
+
+		DataElement()
+		{
+			m_size = -1;
+			m_type = GT_FlOAT;
+			m_stride = -1;
+			m_data = NULL;
+		}
+	};
+
+
+	// 模拟状态机
+	struct Statement
+	{
+		bool m_useBlend;
+		bool m_enableTexture; //是否启用纹理贴图
+
+		const Image* m_texture; // 当前使用的纹理
+		Image::TEXTURE_TYPE m_texType; // 纹理取样的方式：clamp or repeat
+		byte m_alphaLimit; // alpha值大于该值的像素才可被绘制
+
+		DataElement m_vertexData;
+		DataElement m_colorData;
+		DataElement m_texCoordData;
+
+		Statement() // 构造函数赋初值
+		{
+			m_useBlend = false;
+			m_enableTexture = false;
+			m_texture = NULL;
+			m_texType = Image::TX_REPEAT;
+			m_alphaLimit = 0;
+		}
+	};
+
 	
 	class Canvas
 	{
@@ -35,13 +89,7 @@ namespace GT
 		int m_width;
 		int m_height;
 		RGBA* m_buffer;
-
-		byte m_alphaLimit; // alpha值大于该值的像素才可被绘制
-		bool m_useBlend;
-		bool m_enableTexture; //是否启用纹理贴图
-
-		const Image* m_texture; // 当前使用的纹理
-		Image::TEXTURE_TYPE m_texType; // 纹理取样的方式：clamp or repeat
+		Statement m_state;
 	
 	public:
 		Canvas(int _width, int _height, void* _buffer) // 构造函数
@@ -57,8 +105,8 @@ namespace GT
 			m_width = _width;
 			m_height = _height;
 			m_buffer = (RGBA*)_buffer;
-			m_useBlend = false; // 默认情况下不开颜色混合
-			m_enableTexture = false; // 默认情况下不使用纹理
+			m_state.m_useBlend = false; // 默认情况下不开颜色混合
+			m_state.m_enableTexture = false; // 默认情况下不使用纹理
 			
 		}
 
@@ -124,32 +172,44 @@ namespace GT
 		// 是否开启alpha测试
 		void setAlphaLimit(byte _limit)
 		{
-			m_alphaLimit = _limit;
+			m_state.m_alphaLimit = _limit;
 		}
 
 		// 是否开启alpha混合
 		void setBlend(bool _useBlend)
 		{
-			m_useBlend = _useBlend;
+			m_state.m_useBlend = _useBlend;
 		}
 
 		// 是否开启纹理
 		void enableTexture(bool _enable)
 		{
-			m_enableTexture = _enable;
+			m_state.m_enableTexture = _enable;
 		}
 
 		// 绑定纹理
 		void bindTexture(const Image* _image)
 		{
-			m_texture = _image;
+			m_state.m_texture = _image;
 		}
 
-		// 
+		// 设置纹理取样的方式
 		void setTextureType(Image::TEXTURE_TYPE _type)
 		{
-			m_texType = _type;
+			m_state.m_texType = _type;
 		}
+
+		// 绑定顶点数据
+		void gtVertexPointer(int _size, DATA_TYPE _type, int _stride, byte* _data);
+		
+		// 绑定颜色数据
+		void gtColorPointer(int _size, DATA_TYPE _type, int _stride, byte* _data);
+
+		// 绑定纹理数据
+		void gtTexCoordPointer(int _size, DATA_TYPE _type, int _stride, byte* _data);
+
+		// 根据状态模式画图
+		void gtDrawArray(DRAW_MODE _mode, int _first, int _count);
 	};
 }
 

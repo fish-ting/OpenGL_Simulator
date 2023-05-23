@@ -88,12 +88,12 @@ namespace GT
 				}
 			}
 
-			if (m_enableTexture)
+			if (m_state.m_enableTexture)
 			{
 				floatV2 _uv = uvLerp(pt1.m_uv, pt2.m_uv, _scale); // 使用纹理
-				if (m_texture)
+				if (m_state.m_texture)
 				{
-					_color = m_texture->getColorByUV(_uv.x, _uv.y, m_texType);
+					_color = m_state.m_texture->getColorByUV(_uv.x, _uv.y, m_state.m_texType);
 				}
 				else
 				{
@@ -435,7 +435,7 @@ namespace GT
 			for (int v = 0; v < _image->getHeight(); v++)
 			{
 				RGBA _srcColor = _image->getColor(u, v);
-				if (!m_useBlend) // 非混合
+				if (!m_state.m_useBlend) // 非混合
 				{
 					drawPoint(_x + u, _y + v, _srcColor); // 未开启颜色混合
 				}
@@ -460,4 +460,38 @@ namespace GT
 
 		return m_buffer[y * m_width + x];
 	}
+
+	// 绑定顶点数据
+	void Canvas::gtVertexPointer(int _size, DATA_TYPE _type, int _stride, byte* _data)
+	{
+		m_state.m_vertexData.m_size = _size;
+		m_state.m_vertexData.m_type = _type;
+		m_state.m_vertexData.m_stride = _stride;
+		m_state.m_vertexData.m_data = _data;
+	}
+
+	// 绑定颜色数据
+	void Canvas::gtColorPointer(int _size, DATA_TYPE _type, int _stride, byte* _data)
+	{
+		m_state.m_colorData.m_size = _size;
+		m_state.m_colorData.m_type = _type;
+		m_state.m_colorData.m_stride = _stride;
+		m_state.m_colorData.m_data = _data;
+	}
+	
+	// 绑定纹理数据
+	void Canvas::gtTexCoordPointer(int _size, DATA_TYPE _type, int _stride, byte* _data)
+	{
+		m_state.m_texCoordData.m_size = _size;
+		m_state.m_texCoordData.m_type = _type;
+		m_state.m_texCoordData.m_stride = _stride;
+		m_state.m_texCoordData.m_data = _data;
+	}
+
+	// 根据状态模式画图
+	void Canvas::gtDrawArray(DRAW_MODE _mode, int _first, int _count)
+	{
+
+	}
+	
 }
