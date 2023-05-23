@@ -24,7 +24,7 @@ GT::Image* _zoomImage = NULL;
 // 窗口的基本性质
 HWND hWnd;
 int wWidth = 1200;
-int wHeight = 600;
+int wHeight = 800;
 
 float speed = 0.01f;
 
@@ -111,36 +111,18 @@ void Render()
 {
     _canvas->clear();
     
-    GT::Point ptArray1[] =
+    GT::Point ptArray[] =
     {
-        {0, 0, GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
-        {1180, 0, GT::RGBA(255, 0 , 0), GT::floatV2(1.0, 0)},
-        {1180, 599, GT::RGBA(255, 0 , 0), GT::floatV2(1.0, 1.0)}
+        {0, 200, GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
+        {800, 200, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
+        {100, 600, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)},
+        {800, 300, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)},
+        {200, 150, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)}
     };
 
-    GT::Point ptArray2[] =
-    {
-        {0, 0, GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
-        {0, 599, GT::RGBA(255, 0 , 0), GT::floatV2(0, 1.0)},
-        {1180, 599, GT::RGBA(255, 0 , 0), GT::floatV2(1.0, 1.0)}
-    };
-    
-    
-
-    for (int i = 0; i < 3; i++)
-    {
-        ptArray1[i].m_uv.x += speed;
-        ptArray2[i].m_uv.x += speed;
-    }
-
-    speed += 0.003;
-
-    _canvas->enableTexture(true);
-    _canvas->bindTexture(_bkImage);
-    _canvas->setTextureType(GT::Image::TX_REPEAT);
-    _canvas->drawTriangle(ptArray1[0], ptArray1[1], ptArray1[2]);
-    _canvas->drawTriangle(ptArray2[0], ptArray2[1], ptArray2[2]);
-    
+    _canvas->gtVertexPointer(2, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)ptArray);
+    _canvas->gtColorPointer(1, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)&ptArray[0].m_color);
+    _canvas->gtDrawArray(GT::GT_LINE, 0, 5);
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
 }

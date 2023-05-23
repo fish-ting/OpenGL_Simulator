@@ -491,7 +491,46 @@ namespace GT
 	// 根据状态模式画图
 	void Canvas::gtDrawArray(DRAW_MODE _mode, int _first, int _count)
 	{
+		// 直线
+		Point pt0, pt1;
+		byte* _vertexData = m_state.m_vertexData.m_data;
+		byte* _colorData = m_state.m_colorData.m_data;
+		switch (_mode)
+		{
+		case GT::GT_LINE:
+		{
+			for (int i = 0; i < _count - 2; i += 2) // 每条线一次消耗两个点
+			{
+				// 取点的坐标
+				float* _vertexDataFloat = (float*)_vertexData;
+				pt0.m_x = _vertexDataFloat[0];
+				pt0.m_y = _vertexDataFloat[1];
+				_vertexData += m_state.m_vertexData.m_stride;
 
+				_vertexDataFloat = (float*)_vertexData;
+				pt1.m_x = _vertexDataFloat[0];
+				pt1.m_y = _vertexDataFloat[1];
+				_vertexData += m_state.m_vertexData.m_stride;
+
+				// 取点的颜色
+				RGBA* _colorDataRGBA = (RGBA*)_colorData;
+				pt0.m_color = _colorDataRGBA[0];
+
+				_colorData += m_state.m_colorData.m_stride;
+
+				_colorDataRGBA = (RGBA*)_colorData;
+				pt1.m_color = _colorDataRGBA[0];
+
+				_colorData += m_state.m_colorData.m_stride;
+				drawLine(pt0, pt1);
+			}
+		}
+			break;
+		case GT::GT_TRIANGLE:
+			break;
+		default:
+			break;
+		}
 	}
 	
 }
