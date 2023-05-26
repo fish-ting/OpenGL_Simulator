@@ -210,6 +210,8 @@ namespace GT
 
 		// 根据状态模式画图
 		void gtDrawArray(DRAW_MODE _mode, int _first, int _count);
+
+		bool judgeLineAndRect(int _x1, int _x2, int& _x1Cut, int& x2Cut);
 	};
 }
 

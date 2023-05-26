@@ -253,6 +253,41 @@ namespace GT
 		return;
 	}
 
+	bool Canvas::judgeLineAndRect(int _x1, int _x2, int& _x1Cut, int& _x2Cut)
+	{
+		// 完全出界，直接丢弃不画
+		if (_x1 < 0 && _x2 < 0)
+		{
+			return false;
+		}
+		if (_x1 > m_width - 1 && _x2 >m_width - 1)
+		{
+			return false;
+		}
+
+		// 裁剪x1
+		_x1Cut = _x1;
+		if (_x1 < 0)
+		{
+			_x1Cut = 0;
+		}
+		if (_x1 > m_width - 1)
+		{
+			_x1Cut = m_width - 1;
+		}
+		// 裁剪x2
+		_x2Cut = _x2;
+		if (_x2 < 0)
+		{
+			_x2Cut = 0;
+		}
+		if (_x2 > m_width - 1)
+		{
+			_x2Cut = m_width - 1;
+		}
+		return true;
+	}
+
 	// 优化画三角形算法：画平底三角形
 	void Canvas::drawTriangleFlat(Point ptFlat1, Point ptFlat2, Point pt)
 	{
@@ -329,7 +364,7 @@ namespace GT
 			yEnd = m_height - 1;
 		}
 
-		for (int y = yStart; y <= yEnd; y++)
+		for (int y = yStart; y < yEnd; y++)
 		{
 			int x1 = 0;
 			if (k1 == 0)
@@ -339,16 +374,6 @@ namespace GT
 			else
 			{
 				x1 = ((float)y - b1) / k1;
-			}
-
-			// 剪裁 x1
-			if (x1 < 0)
-			{
-				x1 = 0;
-			}
-			if (x1 > m_width)
-			{
-				x1 = m_width - 1;
 			}
 
 			int x2 = 0;
@@ -361,14 +386,12 @@ namespace GT
 				x2 = ((float)y - b2) / k2;
 			}
 
-			// 剪裁 x2
-			if (x2 < 0)
+			// 剪裁 x1 和 x2
+			int x1Cut = x1;
+			int x2Cut = x2;
+			if (!judgeLineAndRect(x1, x2, x1Cut, x2Cut))
 			{
-				x2 = 0;
-			}
-			if (x2 > m_width)
-			{
-				x2 = m_width - 1;
+				continue;
 			}
 
 			// 找到每条步进的边相交的两个点
@@ -376,11 +399,28 @@ namespace GT
 			RGBA _color1 = colorLerp(colorStart1, colorEnd1, s);
 			RGBA _color2 = colorLerp(colorStart2, colorEnd2, s);
 
+			// 避免裁剪x坐标产生的影响
+			RGBA _color1Cut = _color1;
+			RGBA _color2Cut = _color2;
+			if (x2 != x1)
+			{
+				_color1Cut = colorLerp(_color1, _color2, (float)(x1Cut - x1) / (float)(x2 - x1));
+				_color2Cut = colorLerp(_color1, _color2, (float)(x2Cut - x1) / (float)(x2 - x1));
+			}
+
 			floatV2 _uv1 = uvLerp(uvStart1, uvEnd1, s);
 			floatV2 _uv2 = uvLerp(uvStart2, uvEnd2, s);
 
-			Point pt1(x1, y, _color1, _uv1);
-			Point pt2(x2, y, _color2, _uv2);
+			floatV2 _uv1Cut = _uv1;
+			floatV2 _uv2Cut = _uv2;
+			if (x2 != x1)
+			{
+				_uv1Cut = uvLerp(_uv1, _uv2, (float)(x1Cut - x1) / (float)(x2 - x1));
+				_uv2Cut = uvLerp(_uv1, _uv2, (float)(x2Cut - x1) / (float)(x2 - x1));
+			}
+
+			Point pt1(x1Cut, y, _color1Cut, _uv1Cut);
+			Point pt2(x2Cut, y, _color2Cut, _uv2Cut);
 
 			drawLine(pt1, pt2);
 		}
@@ -421,7 +461,7 @@ namespace GT
 		float judge2 = (y - (k2 * x + b2)) * (pt2.m_y - (k2 * pt2.m_x + b2));
 		float judge3 = (y - (k3 * x + b3)) * (pt3.m_y - (k3 * pt3.m_x + b3));
 
-		if (judge1 >= 0 && judge2 >= 0 && judge3 >= 0) {
+		if (judge1 > 0 && judge2 > 0 && judge3 > 0) {
 			return true;
 		}
 		return false;
