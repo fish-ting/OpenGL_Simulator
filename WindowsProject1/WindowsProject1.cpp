@@ -7,6 +7,11 @@
 #include <math.h>
 #include "Image.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
 #define MAX_LOADSTRING 100
 
 // 全局变量:
@@ -115,11 +120,20 @@ void Render()
     {
         {0, 0, GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
         {1000, 0, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
-        {1000, 600, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)},
-        {0, 0, GT::RGBA(0, 0 , 255), GT::floatV2(0.0, 0.0)},
-        {0, 600, GT::RGBA(0, 0 , 255), GT::floatV2(0.0, 1.0)},
         {1000, 600, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)}
     };
+
+    for (int i = 0; i < 3; i++)
+    {
+        glm::vec4 ptv4(ptArray[i].m_x, ptArray[i].m_y, 0, 1);
+        glm::mat4 rMat(1.0f);
+        rMat = glm::rotate(rMat, glm::radians(20.0f), glm::vec3(0, 0, 1));
+        glm::mat4 tMat(1.0f);
+        tMat = glm::translate(tMat, glm::vec3(200, 200, 0));
+        ptv4 = tMat * rMat * ptv4;
+        ptArray[i].m_x = ptv4.x;
+        ptArray[i].m_y = ptv4.y;
+    }
 
     _canvas->gtVertexPointer(2, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)ptArray);
     _canvas->gtColorPointer(1, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)&ptArray[0].m_color);
@@ -129,7 +143,7 @@ void Render()
     _canvas->setTextureType(GT::Image::TX_CLAMP_TO_EDGE);
     _canvas->bindTexture(_bkImage);
 
-    _canvas->gtDrawArray(GT::GT_TRIANGLE, 0, 6);
+    _canvas->gtDrawArray(GT::GT_TRIANGLE, 0, 3);
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
 }
