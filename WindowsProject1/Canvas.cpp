@@ -190,10 +190,10 @@ namespace GT
 				break;
 			}
 
-			Point rpt1(0, 0, RGBA());
-			Point rpt2(0, m_width, RGBA());
-			Point rpt3(0, m_height, RGBA());
-			Point rpt4(m_width, m_height, RGBA());
+			Point rpt1(0, 0, 0, RGBA());
+			Point rpt2(0, m_width, 0, RGBA());
+			Point rpt3(0, m_height, 0, RGBA());
+			Point rpt4(m_width, m_height, 0, RGBA());
 
 			if (judgeInTriangle(rpt1, pVec) || judgeInTriangle(rpt2, pVec) || judgeInTriangle(rpt3, pVec) || judgeInTriangle(rpt4, pVec))
 			{
@@ -232,7 +232,7 @@ namespace GT
 		float b = (float)ptMax.m_y - k * (float)ptMax.m_x;
 
 		// 求割线的焦点
-		Point newPoint(0, 0, RGBA(255, 0, 0));
+		Point newPoint(0, 0, 0, RGBA(255, 0, 0));
 		newPoint.m_y = ptMid.m_y;
 		if (k == 0)
 		{
@@ -419,8 +419,8 @@ namespace GT
 				_uv2Cut = uvLerp(_uv1, _uv2, (float)(x2Cut - x1) / (float)(x2 - x1));
 			}
 
-			Point pt1(x1Cut, y, _color1Cut, _uv1Cut);
-			Point pt2(x2Cut, y, _color2Cut, _uv2Cut);
+			Point pt1(x1Cut, y, 0, _color1Cut, _uv1Cut);
+			Point pt2(x2Cut, y, 0, _color2Cut, _uv2Cut);
 
 			drawLine(pt1, pt2);
 		}

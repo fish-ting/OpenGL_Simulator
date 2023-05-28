@@ -32,6 +32,7 @@ int wWidth = 1200;
 int wHeight = 800;
 
 float speed = 0.01f;
+float angle = 0;
 
 // 全局处理函数
 void Render();
@@ -118,22 +119,31 @@ void Render()
     
     GT::Point ptArray[] =
     {
-        {0, 0, GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
-        {1000, 0, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
-        {1000, 600, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)}
+        {0, 0, 0,  GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
+        {1000, 0, 0, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
+        {1000, 600, 0, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)}
     };
 
     for (int i = 0; i < 3; i++)
     {
-        glm::vec4 ptv4(ptArray[i].m_x, ptArray[i].m_y, 0, 1);
+        glm::vec4 ptv4(ptArray[i].m_x, ptArray[i].m_y, ptArray[i].m_z, 1);
+        
         glm::mat4 rMat(1.0f);
-        rMat = glm::rotate(rMat, glm::radians(20.0f), glm::vec3(0, 0, 1));
+
+        rMat = glm::rotate(rMat, glm::radians(angle), glm::vec3(1.0f, 0, 0));
+        
         glm::mat4 tMat(1.0f);
-        tMat = glm::translate(tMat, glm::vec3(200, 200, 0));
+
+        tMat = glm::translate(tMat, glm::vec3(100, 200, 0));
+
         ptv4 = tMat * rMat * ptv4;
+
         ptArray[i].m_x = ptv4.x;
         ptArray[i].m_y = ptv4.y;
+        ptArray[i].m_z = ptv4.z;
     }
+
+    angle += 2;
 
     _canvas->gtVertexPointer(2, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)ptArray);
     _canvas->gtColorPointer(1, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)&ptArray[0].m_color);
