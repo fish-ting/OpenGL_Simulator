@@ -6,14 +6,21 @@
 namespace GT
 {
 	// 画点，属于canvas画布本身应该存在的基本功能
-	void Canvas::drawPoint(int x, int y, RGBA _color)
+	void Canvas::drawPoint(Point _pt)
 	{
-		if (x < 0 || x >= m_width || y < 0 || y >= m_height)
+		if (_pt.m_x < 0 || _pt.m_x >= m_width || _pt.m_y < 0 || _pt.m_y >= m_height)
 		{
 			return;
 		}
+		int _index = _pt.m_y * m_width + _pt.m_x;
+		if (_pt.m_z > m_zBuffer[_index])
+		{
+			// 离得远，不画
+			return;
+		}
 
-		m_buffer[y * m_width + x] = _color;
+		m_zBuffer[_index] = _pt.m_z;
+		m_buffer[_index] = _pt.m_color;
 	}
 
 	// 画线，属于canvas画布本身应该存在的基本功能
@@ -104,8 +111,11 @@ namespace GT
 			{
 				_color = colorLerp(pt1.m_color, pt2.m_color, _scale);
 			}
+
+			// z插值
+			float zNow = zLerp(pt1.m_z, pt2.m_z, _scale);
 			
-			drawPoint(xNow, yNow, _color);
+			drawPoint(Point(xNow, yNow, zNow, _color));
 			if (p >= 0) // k > 1的情况
 			{
 				if (useXStep)
@@ -132,7 +142,7 @@ namespace GT
 	}
 
 	// 画三角形，属于canvas画布本身应该存在的基本功能，基本遍历算法
-	void Canvas::drawTriangle_scan(Point pt1, Point pt2, Point pt3)
+	/*void Canvas::drawTriangle_scan(Point pt1, Point pt2, Point pt3)
 	{
 		// 构建包围体
 		int left   = MIN(pt3.m_x, MIN(pt1.m_x, pt2.m_x));
@@ -171,7 +181,7 @@ namespace GT
 				}
 			}
 		}
-	}
+	}*/
 
 	// 优化画三角形算法：画任意三角形
 	void Canvas::drawTriangle(Point pt1, Point pt2, Point pt3)
@@ -246,6 +256,7 @@ namespace GT
 		float s = (float)(newPoint.m_y - ptMin.m_y) / (float)(ptMax.m_y - ptMin.m_y);
 		newPoint.m_color = colorLerp(ptMin.m_color, ptMax.m_color, s);
 		newPoint.m_uv = uvLerp(ptMin.m_uv, ptMax.m_uv, s);
+		newPoint.m_z = zLerp(ptMin.m_z, ptMax.m_z, s);
 
 		drawTriangleFlat(ptMid, newPoint, ptMax);
 		drawTriangleFlat(ptMid, newPoint, ptMin);
@@ -321,6 +332,11 @@ namespace GT
 		floatV2 uvStart2;
 		floatV2 uvEnd2;
 
+		float zStart1;
+		float zEnd1;
+		float zStart2;
+		float zEnd2;
+
 		if (pt.m_y < ptFlat1.m_y)
 		{
 			yStart = pt.m_y;
@@ -335,6 +351,11 @@ namespace GT
 			uvEnd1 = ptFlat1.m_uv;
 			uvStart2 = pt.m_uv;
 			uvEnd2 = ptFlat2.m_uv;
+
+			zStart1 = pt.m_z;
+			zEnd1 = ptFlat1.m_z;
+			zStart2 = pt.m_z;
+			zEnd2 = ptFlat2.m_z;
 		}
 		else
 		{
@@ -350,6 +371,11 @@ namespace GT
 			uvEnd1 = pt.m_uv;
 			uvStart2 = ptFlat2.m_uv;
 			uvEnd2 = pt.m_uv;
+
+			zStart1 = ptFlat1.m_z;
+			zEnd1 = pt.m_z;
+			zStart2 = ptFlat2.m_z;
+			zEnd2 = pt.m_z;
 		}
 
 		float yColorStep = 1.0 / (float)(yEnd - yStart);
@@ -419,8 +445,20 @@ namespace GT
 				_uv2Cut = uvLerp(_uv1, _uv2, (float)(x2Cut - x1) / (float)(x2 - x1));
 			}
 
-			Point pt1(x1Cut, y, 0, _color1Cut, _uv1Cut);
-			Point pt2(x2Cut, y, 0, _color2Cut, _uv2Cut);
+
+			float _z1 = zLerp(zStart1, zEnd1, s);
+			float _z2 = zLerp(zStart2, zEnd2, s);
+
+			float _z1Cut = _z1;
+			float _z2Cut = _z2;
+			if (x2 != x1)
+			{
+				_z1Cut = zLerp(_z1, _z2, (float)(x1Cut - x1) / (float)(x2 - x1));
+				_z2Cut = zLerp(_z1, _z2, (float)(x2Cut - x1) / (float)(x2 - x1));
+			}
+
+			Point pt1(x1Cut, y, _z1Cut, _color1Cut, _uv1Cut);
+			Point pt2(x2Cut, y, _z2Cut, _color2Cut, _uv2Cut);
 
 			drawLine(pt1, pt2);
 		}
@@ -477,14 +515,14 @@ namespace GT
 				RGBA _srcColor = _image->getColor(u, v);
 				if (!m_state.m_useBlend) // 非混合
 				{
-					drawPoint(_x + u, _y + v, _srcColor); // 未开启颜色混合
+					//drawPoint(_x + u, _y + v, _srcColor); // 未开启颜色混合
 				}
 				else // 混合
 				{
 					RGBA _dstColor = getColor(_x + u, _y + v);
 					float _srcAlpha = (float)_srcColor.m_a / 255.0;
 					RGBA _finalColor = colorLerp(_dstColor, _srcColor, _image->getAlpha() * _srcAlpha);
-					drawPoint(_x + u, _y + v, _finalColor);
+					//drawPoint(_x + u, _y + v, _finalColor);
 				}
 			}
 		}
@@ -577,16 +615,19 @@ namespace GT
 				float* _vertexDataFloat = (float*)_vertexData;
 				pt0.m_x = _vertexDataFloat[0];
 				pt0.m_y = _vertexDataFloat[1];
+				pt0.m_z = _vertexDataFloat[2];
 				_vertexData += m_state.m_vertexData.m_stride;
 
 				_vertexDataFloat = (float*)_vertexData;
 				pt1.m_x = _vertexDataFloat[0];
 				pt1.m_y = _vertexDataFloat[1];
+				pt1.m_z = _vertexDataFloat[2];
 				_vertexData += m_state.m_vertexData.m_stride;
 
 				_vertexDataFloat = (float*)_vertexData;
 				pt2.m_x = _vertexDataFloat[0];
 				pt2.m_y = _vertexDataFloat[1];
+				pt2.m_z = _vertexDataFloat[2];
 				_vertexData += m_state.m_vertexData.m_stride;
 
 				// 取点的颜色

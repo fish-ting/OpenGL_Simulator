@@ -91,6 +91,8 @@ namespace GT
 		int m_width;
 		int m_height;
 		RGBA* m_buffer;
+		float* m_zBuffer;
+
 		Statement m_state;
 	
 	public:
@@ -101,12 +103,13 @@ namespace GT
 			{
 				m_width = -1;
 				m_height = -1;
-				m_buffer = nullptr;  // C++默认空值略有不同
+				m_buffer = NULL;
 			}
 
 			m_width = _width;
 			m_height = _height;
 			m_buffer = (RGBA*)_buffer;
+			m_zBuffer = new float[_width * _height];
 			m_state.m_useBlend = false; // 默认情况下不开颜色混合
 			m_state.m_enableTexture = false; // 默认情况下不使用纹理
 			
@@ -114,18 +117,20 @@ namespace GT
 
 		~Canvas()
 		{
+			delete[] m_zBuffer;
 		}
 
 		void clear()
 		{
-			if (m_buffer != nullptr)
+			if (m_buffer != NULL)
 			{
 				memset(m_buffer, 0, sizeof(RGBA) * m_width * m_height);
+				memset(m_zBuffer, 255, sizeof(float) * m_width * m_height); // 最大值填入深度缓冲区
 			}
 		}
 
 		// 画点，属于canvas画布本身应该存在的基本功能
-		void drawPoint(int x, int y, RGBA _color);
+		void drawPoint(Point _pt);
 
 		// 获取当前颜色buffer区中的颜色
 		RGBA getColor(int x, int y);
@@ -134,7 +139,7 @@ namespace GT
 		void drawLine(Point pt1, Point pt2);
 
 		// 画三角形，属于canvas画布本身应该存在的基本功能（最小包围盒遍历）
-		void drawTriangle_scan(Point pt1, Point pt2, Point pt3);
+		//void drawTriangle_scan(Point pt1, Point pt2, Point pt3);
 
 		// 优化三角形扫描算法：1）画平底三角形
 		void drawTriangleFlat(Point ptFlat1, Point ptFlat2, Point pt);
@@ -160,6 +165,12 @@ namespace GT
 			_uv.x = _uv1.x + (_uv2.x - _uv1.x) * _scale;
 			_uv.y = _uv1.y + (_uv2.y - _uv1.y) * _scale;
 			return _uv;
+		}
+
+		// zbuffer插值计算
+		inline float zLerp(float _z1, float _z2, float _scale)
+		{
+			return _z1 + (_z2 - _z1) * _scale;
 		}
 
 		// 优化计算：判断三角形是否在矩形画布中

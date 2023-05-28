@@ -1,10 +1,11 @@
 ﻿  WindowsProject1.cpp
 E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Image.h(54,10): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
 E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Image.h(55,10): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
-E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(149,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
-E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(150,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
-E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(151,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
-E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(152,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
-E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\WindowsProject1.cpp(155,66): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\WindowsProject1.cpp(156,67): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(154,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(155,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(156,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\Canvas.h(157,29): warning C4244: “=”: 从“float”转换到“GT::byte”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\WindowsProject1.cpp(153,66): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\WindowsProject1.cpp(154,67): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\WindowsProject1\WindowsProject1.cpp(158,17): warning C4305: “+=”: 从“double”到“float”截断
   WindowsProject1.vcxproj -> E:\OpenGL相关知识\OpenGLSimulator\OpenGL_Simulator\x64\Debug\WindowsProject1.exe

@@ -119,13 +119,13 @@ void Render()
     
     GT::Point ptArray[] =
     {
-        {100, 0, -100,  GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
-        {700, 0, -100, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
-        {700, 300, -100, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)},
-
         {0, 0, 0,  GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
-        {500, 0, 0, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
-        {500, 300, 0, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)}
+        {300, 0, 0, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
+        {300, 300, 0, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)},
+
+        {300, 0, 0,  GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
+        {300, 300, 0, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
+        {300, 0, -500, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)}
     };
 
     for (int i = 0; i < 6; i++)
@@ -134,13 +134,11 @@ void Render()
         
         // 构建旋转矩阵
         glm::mat4 rMat(1.0f);
-        rMat = glm::rotate(rMat, glm::radians(angle), glm::vec3(1.0f, 0, 0));
+        rMat = glm::rotate(rMat, glm::radians(angle), glm::vec3(0, 1.0f, 0));
         
         // 构建平移矩阵
         glm::mat4 tMat(1.0f);
-        tMat = glm::translate(tMat, glm::vec3(100, 200, 0));
-
-        //ptv4 = tMat * rMat * ptv4;
+        tMat = glm::translate(tMat, glm::vec3(-300, 0, 0));
 
         // 构建观察矩阵
         glm::mat4 vMat(1.0f);
@@ -150,14 +148,14 @@ void Render()
         glm::mat4 pMat(1.0f);
         pMat = glm::perspective(glm::radians(60.0f), (float)wWidth / (float)wHeight, 1.0f, 1000.0f);
 
-        ptv4 = pMat * vMat * ptv4;
+        ptv4 = pMat * vMat * tMat * rMat * ptv4;
 
         ptArray[i].m_x = (ptv4.x / ptv4.w + 1.0) * (float)wWidth / 2.0;
         ptArray[i].m_y = (ptv4.y / ptv4.w + 1.0) * (float)wHeight / 2.0;
         ptArray[i].m_z = ptv4.z / ptv4.w;
     }
 
-    //angle += 2;
+    angle += 0.2;
 
     _canvas->gtVertexPointer(2, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)ptArray);
     _canvas->gtColorPointer(1, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)&ptArray[0].m_color);
