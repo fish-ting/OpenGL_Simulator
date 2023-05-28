@@ -135,7 +135,7 @@ void Render()
         // 构建旋转矩阵
         glm::mat4 rMat(1.0f);
         rMat = glm::rotate(rMat, glm::radians(angle), glm::vec3(0, 1.0f, 0));
-        
+        rMat = glm::rotate(rMat, glm::radians(50.0f), glm::vec3(1, 0.0f, 0));
         // 构建平移矩阵
         glm::mat4 tMat(1.0f);
         tMat = glm::translate(tMat, glm::vec3(-300, 0, 0));
@@ -148,7 +148,7 @@ void Render()
         glm::mat4 pMat(1.0f);
         pMat = glm::perspective(glm::radians(60.0f), (float)wWidth / (float)wHeight, 1.0f, 1000.0f);
 
-        ptv4 = pMat * vMat * tMat * rMat * ptv4;
+        ptv4 = pMat * vMat * rMat * tMat * ptv4;
 
         ptArray[i].m_x = (ptv4.x / ptv4.w + 1.0) * (float)wWidth / 2.0;
         ptArray[i].m_y = (ptv4.y / ptv4.w + 1.0) * (float)wHeight / 2.0;
