@@ -119,12 +119,16 @@ void Render()
     
     GT::Point ptArray[] =
     {
+        {100, 0, -100,  GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
+        {700, 0, -100, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
+        {700, 300, -100, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)},
+
         {0, 0, 0,  GT::RGBA(255, 0 , 0), GT::floatV2(0, 0)},
-        {1000, 0, 0, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
-        {1000, 600, 0, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)}
+        {500, 0, 0, GT::RGBA(0, 255 , 0), GT::floatV2(1.0, 0)},
+        {500, 300, 0, GT::RGBA(0, 0 , 255), GT::floatV2(1.0, 1.0)}
     };
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 6; i++)
     {
         glm::vec4 ptv4(ptArray[i].m_x, ptArray[i].m_y, ptArray[i].m_z, 1);
         
@@ -136,20 +140,24 @@ void Render()
         glm::mat4 tMat(1.0f);
         tMat = glm::translate(tMat, glm::vec3(100, 200, 0));
 
-        ptv4 = tMat * rMat * ptv4;
+        //ptv4 = tMat * rMat * ptv4;
 
         // 构建观察矩阵
         glm::mat4 vMat(1.0f);
-        vMat = glm::lookAt(glm::vec3(250, 0, 250), glm::vec3(250, 0, 0), glm::vec3(0, 1, 0));
+        vMat = glm::lookAt(glm::vec3(0, 0, 1000), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
-        ptv4 = vMat * ptv4;
+        // 构建投影矩阵
+        glm::mat4 pMat(1.0f);
+        pMat = glm::perspective(glm::radians(60.0f), (float)wWidth / (float)wHeight, 1.0f, 1000.0f);
 
-        ptArray[i].m_x = ptv4.x;
-        ptArray[i].m_y = ptv4.y;
-        ptArray[i].m_z = ptv4.z;
+        ptv4 = pMat * vMat * ptv4;
+
+        ptArray[i].m_x = (ptv4.x / ptv4.w + 1.0) * (float)wWidth / 2.0;
+        ptArray[i].m_y = (ptv4.y / ptv4.w + 1.0) * (float)wHeight / 2.0;
+        ptArray[i].m_z = ptv4.z / ptv4.w;
     }
 
-    angle += 2;
+    //angle += 2;
 
     _canvas->gtVertexPointer(2, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)ptArray);
     _canvas->gtColorPointer(1, GT::GT_FlOAT, sizeof(GT::Point), (GT::byte*)&ptArray[0].m_color);
@@ -159,7 +167,7 @@ void Render()
     _canvas->setTextureType(GT::Image::TX_CLAMP_TO_EDGE);
     _canvas->bindTexture(_bkImage);
 
-    _canvas->gtDrawArray(GT::GT_TRIANGLE, 0, 3);
+    _canvas->gtDrawArray(GT::GT_TRIANGLE, 0, 6);
     // 画到设备上，hMem相当于缓冲区
     BitBlt(hDC, 0, 0, wWidth, wHeight, hMem, 0, 0, SRCCOPY);
 }
