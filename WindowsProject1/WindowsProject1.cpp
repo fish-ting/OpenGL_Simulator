@@ -128,15 +128,21 @@ void Render()
     {
         glm::vec4 ptv4(ptArray[i].m_x, ptArray[i].m_y, ptArray[i].m_z, 1);
         
+        // 构建旋转矩阵
         glm::mat4 rMat(1.0f);
-
         rMat = glm::rotate(rMat, glm::radians(angle), glm::vec3(1.0f, 0, 0));
         
+        // 构建平移矩阵
         glm::mat4 tMat(1.0f);
-
         tMat = glm::translate(tMat, glm::vec3(100, 200, 0));
 
         ptv4 = tMat * rMat * ptv4;
+
+        // 构建观察矩阵
+        glm::mat4 vMat(1.0f);
+        vMat = glm::lookAt(glm::vec3(250, 0, 250), glm::vec3(250, 0, 0), glm::vec3(0, 1, 0));
+
+        ptv4 = vMat * ptv4;
 
         ptArray[i].m_x = ptv4.x;
         ptArray[i].m_y = ptv4.y;
